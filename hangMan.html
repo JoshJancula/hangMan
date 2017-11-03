@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<title>HangMan</title>
+</head>
+
+<body>
+
+
+	<div id="game">
+		<p>Guess a letter</p>
+	</div>
+
+
+	<script type="text/javascript"> 
+
+
+// Create an array of all possible dictionary words for the computer to choose from
+var computerChoices = ["zebra", "penguin", "horse", "kitten", "eagle", "whale", "alligator", "lizard", "hawk", "monkey"];
+
+	// define other variables 
+	var lettersGuessed = [];
+	var currentWord;
+	var answerArray = [];
+	var displayString;
+	var wins = 0;
+	var losses = 0;
+	var guessesLeft = 0;
+
+
+// Resets the game
+function resetGame() {
+	currentWord = computerChoices[Math.floor(Math.random() * computerChoices.length)];
+	guessesLeft = 8;
+	lettersGuessed = [];
+
+	// clear and fill the answerArray with _ _ _
+	answerArray = [];
+
+	for (var i = 0; i < currentWord.length; i++) {
+		answerArray[i] = "_";
+	}
+	scoreOut();
+	
+}
+
+
+// the output of the scoreboard to html
+
+function scoreOut() {
+	var html = 
+	"<p>The Category is Animal</p>" +
+	"<p>You've guessed: " + lettersGuessed + "</p>" +
+	"<p>Guesses Remaining: " + guessesLeft + "</p>" +
+	"<p>Wins: " + wins + "</p>" +
+	"<p>Losses: " + losses + "</p>" +
+	"<p>Progress: " + answerArray.join(" ") + "</p>";
+
+	// Set the inner HTML contents of the #game div to our html string	
+	document.querySelector("#game").innerHTML = html;
+
+}
+
+    // initial game reset
+    resetGame();
+    
+    // append each user guessed character to an array
+    document.onkeyup = function(event) {
+
+      // Determines which key was pressed.
+      var userGuess = event.key;
+      lettersGuessed.push(userGuess);
+      
+// for each guessed character, step through the computer's word to see if it matches and see if it was badGess
+
+var weWon = true;
+var badGuess = true;
+for (var i = 0; i<currentWord.length; i++) {
+	var oneCharFromWord = currentWord.substr(i,1);
+	if (userGuess === oneCharFromWord) {
+		answerArray[i] = userGuess;
+		badGuess = false;
+	}
+	// if there are any _ you have not won 
+	if (answerArray[i] === "_") {
+		weWon = false;
+	}
+}
+
+// determine if you won and then what happens 
+
+if (weWon) {
+	wins++;
+	alert("You Won the word was " + currentWord);
+	resetGame();
+}
+
+// if we didin't win yet, did we lose?
+else {
+	if (badGuess) {
+		guessesLeft--;
+	}
+	if (guessesLeft === 0) {
+		losses++;
+		alert("You lost! " +
+			"The computer was thinking of: " + currentWord);
+		resetGame();
+	}
+	else {
+		scoreOut();
+	}
+}	
+
+}
+</script>
+
+</body>
+</html>
